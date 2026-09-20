@@ -6,7 +6,7 @@ services = [
     "nlp/nlp_service.py",
     "tools/tool_service.py",
     "tts/tts_service.py",
-    "vision/vision_service.py",
+
 ]
 
 for service in services:

@@ -133,18 +133,7 @@ APP_MAP = {
     'powerpoint':    r'C:\Program Files\Microsoft Office\root\Office16\POWERPNT.EXE',
 }
 
-def tool_open_app(params):
-    target = params.get('target', '').lower()
-    path   = APP_MAP.get(target)
 
-    try:
-        if path:
-            subprocess.Popen(path, shell=True)
-        else:
-            subprocess.Popen(f'start "" "{target}"', shell=True)
-        return f"Opening {target}."
-    except Exception as e:
-        return f"Could not open {target}: {e}"
 
 # ════════════════════════════════════════════
 # 4b. OPEN FOLDER — searches everywhere, opens in Explorer

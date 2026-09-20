@@ -3,4 +3,4 @@ start cmd /k "python asr/asr_service.py"
 start cmd /k "python nlp/nlp_service.py"
 start cmd /k "python tools/tool_service.py"
 start cmd /k "python tts/tts_service.py"
-start cmd /k "python vision/vision_service.py"
+
