@@ -1,4 +1,7 @@
-.env
+.env*
+*.db
+workspace/*
+!workspace/.gitkeep
 __pycache__/
 *.pyc
 *.mp3

@@ -1,0 +1,13 @@
+Flask
+Flask-Cors
+groq
+Pillow
+PyAutoGUI
+python-dotenv
+gTTS
+ddgs
+psutil
+pygetwindow
+openai-whisper
+requests
+ 

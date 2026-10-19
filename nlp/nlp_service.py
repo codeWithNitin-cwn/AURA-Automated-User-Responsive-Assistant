@@ -1,73 +1,25 @@
 from flask import Flask, request, jsonify
 from groq import Groq
-import os, json
+import os, json, requests, sys
 from dotenv import load_dotenv
+from prompts import SYSTEM_PROMPT
 
-load_dotenv()
+if hasattr(sys.stdout, 'reconfigure'):
+    sys.stdout.reconfigure(encoding='utf-8', errors='replace')
+
+ENV_PATH = os.path.abspath(os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", ".env"))
+load_dotenv(ENV_PATH)
 app = Flask(__name__)
 client = Groq(api_key=os.getenv("GROQ_API_KEY"))
 
-SYSTEM_PROMPT = """You are AURA's intent parser. Return ONLY a raw JSON object, no markdown, no explanation.
-
-Examples:
-- "open Chrome" → {{"intent": "open_app", "tool": "open_app", "params": {{"app": "chrome"}}}}
-- "open aura folder" → {{"intent": "open_folder", "tool": "open_folder", "params": {{"name": "aura"}}}}
-- "search aura folder in file explorer" → {{"intent": "open_folder", "tool": "open_folder", "params": {{"name": "aura"}}}}
-- "find report.pdf" → {{"intent": "open_file", "tool": "open_file", "params": {{"name": "report.pdf"}}}}
-- "open SREERAM1.pdf" → {{"intent": "open_file", "tool": "open_file", "params": {{"name": "SREERAM1.pdf"}}}}
-- "what time is it" → {{"intent": "get_time", "tool": "get_time", "params": {{}}}}
-- "search python tutorials" → {{"intent": "web_search", "tool": "web_search", "params": {{"query": "python tutorials"}}}}
-
-IMPORTANT: If the user says search/find/locate/open for a file or folder, ALWAYS use open_file or open_folder.
-Never respond with text. Only return JSON.
-
-Command: "{text}"
-
-Available tools:
-
-web_search   → {"intent":"search",       "tool":"web_search",   "params":{"query":"..."}}
-calendar     → {"intent":"calendar",     "tool":"calendar",     "params":{"action":"add","title":"...","datetime":"..."}}
-email        → {"intent":"email",        "tool":"email",        "params":{"to":"...","subject":"...","body":"..."}}
-open_app     → {"intent":"open_app",     "tool":"open_app",     "params":{"target":"chrome|notepad|calculator|spotify|vs code|explorer|cmd|word|excel|powerpoint"}}
-close_app    → {"intent":"close_app",    "tool":"close_app",    "params":{"target":"chrome|notepad|..."}}
-read_file    → {"intent":"read_file",    "tool":"read_file",    "params":{"path":"demo.txt"}}
-create_file  → {"intent":"create_file",  "tool":"create_file",  "params":{"path":"demo.txt","content":"..."}}
-edit_file    → {"intent":"edit_file",    "tool":"edit_file",    "params":{"path":"demo.txt","content":"new content","mode":"overwrite|append"}}
-delete_file  → {"intent":"delete_file",  "tool":"delete_file",  "params":{"path":"demo.txt"}}
-list_files   → {"intent":"list_files",   "tool":"list_files",   "params":{"path":"desktop|downloads|documents|pictures"}}
-find_file    → {"intent":"find_file",    "tool":"find_file",    "params":{"name":"demo.txt"}}
-mouse        → {"intent":"mouse",        "tool":"mouse",        "params":{"action":"click|move|scroll_up|scroll_down|right_click|double_click","x":100,"y":200}}
-keyboard     → {"intent":"keyboard",     "tool":"keyboard",     "params":{"action":"type|hotkey|press|screenshot","text":"...","keys":"ctrl+c","key":"enter"}}
-volume       → {"intent":"volume",       "tool":"volume",       "params":{"action":"up|down|mute","amount":5}}
-system_info  → {"intent":"system_info",  "tool":"system_info",  "params":{"query":"all|cpu|ram|disk|battery|system"}}
-window       → {"intent":"window",       "tool":"window",       "params":{"action":"list|focus|minimize|maximize","target":"..."}}
-read_screen  → {"intent":"read_screen",  "tool":"read_screen",  "params":{"question":"what do you see?"}}
-click_icon   → {"intent":"click_icon",   "tool":"click_icon",   "params":{"target":"Chrome|Recycle Bin|...","action":"double_click"}}
-desktop_icons→ {"intent":"desktop_icons","tool":"desktop_icons","params":{}}
-general      → {"intent":"general",      "tool":"general",      "params":{"response":"..."}}
-
-Examples:
-"Delete demo.txt"              → {"intent":"delete_file","tool":"delete_file","params":{"path":"demo.txt"}}
-"Read notes.txt"               → {"intent":"read_file","tool":"read_file","params":{"path":"notes.txt"}}
-"Edit demo.txt add hello"      → {"intent":"edit_file","tool":"edit_file","params":{"path":"demo.txt","content":"hello","mode":"append"}}
-"Create test.txt"              → {"intent":"create_file","tool":"create_file","params":{"path":"test.txt","content":""}}
-"Find report.pdf"              → {"intent":"find_file","tool":"find_file","params":{"name":"report.pdf"}}
-"Show desktop files"           → {"intent":"list_files","tool":"list_files","params":{"path":"desktop"}}
-"Show downloads"               → {"intent":"list_files","tool":"list_files","params":{"path":"downloads"}}
-"Open Chrome"                  → {"intent":"open_app","tool":"open_app","params":{"target":"chrome"}}
-"What is my RAM?"              → {"intent":"system_info","tool":"system_info","params":{"query":"ram"}}
-"Take a screenshot"            → {"intent":"keyboard","tool":"keyboard","params":{"action":"screenshot"}}
-"Turn up volume"               → {"intent":"volume","tool":"volume","params":{"action":"up","amount":5}}
-"Press Ctrl S"                 → {"intent":"keyboard","tool":"keyboard","params":{"action":"hotkey","keys":"ctrl+s"}}
-"What's on my screen?"         → {"intent":"read_screen","tool":"read_screen","params":{"question":"what do you see?"}}
-"Show desktop icons"           → {"intent":"desktop_icons","tool":"desktop_icons","params":{}}
-
-Return ONLY raw JSON. Nothing else."""
+PROVIDER = os.getenv("AURA_LLM_PROVIDER", "GROQ")
 
 def call_groq(text):
     try:
+        model = os.getenv("GROQ_NLP_MODEL", "groq/compound-mini")
         response = client.chat.completions.create(
-            model="llama-3.3-70b-versatile",
+            model=model,
+            response_format={"type": "json_object"},
             messages=[
                 {"role": "system", "content": SYSTEM_PROMPT},
                 {"role": "user",   "content": f'User said: "{text}"'}
@@ -81,19 +33,59 @@ def call_groq(text):
             if raw.startswith("json"):
                 raw = raw[4:]
         return json.loads(raw.strip())
-    
     except Exception as e:
-      print(f"[NLP ERROR] {type(e).__name__}: {e}")
+        print(f"[NLP GROQ ERROR] {e}")
+        return None
+
+def call_ollama(text):
+    try:
+        url = os.getenv("OLLAMA_NLP_URL", "http://localhost:11434/api/chat")
+        model = os.getenv("OLLAMA_NLP_MODEL", "llama3.2")
+        payload = {
+            "model": model,
+            "messages": [
+                {"role": "system", "content": SYSTEM_PROMPT},
+                {"role": "user",   "content": f'User said: "{text}"'}
+            ],
+            "options": {
+                "temperature": 0.1
+            },
+            "stream": False
+        }
+        r = requests.post(url, json=payload, timeout=15)
+        r.raise_for_status()
+        raw = r.json()["message"]["content"].strip()
+        if raw.startswith("```"):
+            raw = raw.split("```")[1]
+            if raw.startswith("json"):
+                raw = raw[4:]
+        return json.loads(raw.strip())
+    except Exception as e:
+        print(f"[NLP OLLAMA ERROR] {e}")
+        return None
+
+def call_llm(text):
+    if PROVIDER == "OLLAMA":
+        print("[NLP] Parsing via local Ollama...")
+        res = call_ollama(text)
+        if res is not None:
+            return res
+        print("[NLP WARNING] Ollama failed, falling back to Groq...")
+    
+    return call_groq(text) or {"intent": "general", "tool": "general", "params": {"response": "Sorry, NLP services are currently unavailable."}}
 
 @app.route('/parse', methods=['POST'])
 def parse():
-    data = request.get_json()
+    data = request.get_json() or {}
     text = data.get('text', '')
     if not text:
         return jsonify({"error": "No text provided"}), 400
-    result = call_groq(text)
-    print(f"[NLP] '{text}' → {result}")
+    result = call_llm(text)
+    if not isinstance(result, dict):
+        result = {"intent": "general", "tool": "general", "params": {"response": "Sorry, I couldn't understand that."}}
+    print(f"[NLP] '{text}' -> {result}")
     return jsonify(result)
 
 if __name__ == '__main__':
+    print("NLP Service running on port 5002...")
     app.run(port=5002, debug=False)

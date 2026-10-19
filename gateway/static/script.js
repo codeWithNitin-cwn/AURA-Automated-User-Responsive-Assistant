@@ -363,3 +363,191 @@ function escapeHtml(str) {
     .replace(/>/g,  '&gt;')
     .replace(/\n/g, '<br>');
 }
+
+// ── DEVELOPER CONSOLE NAVIGATION & ACTIONS ──
+let healthInterval = null;
+
+function switchView(view) {
+  const homeView = document.getElementById('viewHome');
+  const consoleView = document.getElementById('viewConsole');
+  const navHome = document.getElementById('navHome');
+  const navConsole = document.getElementById('navConsole');
+
+  if (view === 'home') {
+    homeView.style.display = 'block';
+    consoleView.style.display = 'none';
+    navHome.classList.add('active');
+    navConsole.classList.remove('active');
+    
+    // Stop health check polling to save performance
+    if (healthInterval) {
+      clearInterval(healthInterval);
+      healthInterval = null;
+    }
+  } else {
+    homeView.style.display = 'none';
+    consoleView.style.display = 'block';
+    navHome.classList.remove('active');
+    navConsole.classList.add('active');
+
+    // Run first refresh
+    refreshDashboardData();
+    pollUptimeHealth();
+    // Poll service health status every 5 seconds
+    if (!healthInterval) {
+      healthInterval = setInterval(pollUptimeHealth, 5000);
+    }
+  }
+}
+
+async function pollUptimeHealth() {
+  try {
+    const res = await fetch('/status_check');
+    const status = await res.json();
+    for (const [service, state] of Object.entries(status)) {
+      const card = document.getElementById(`hc-${service}`);
+      if (!card) continue;
+      const indicator = card.querySelector('.status-indicator');
+      const text = card.querySelector('.status-text');
+
+      indicator.className = 'status-indicator'; // Reset
+      if (state === 'Online') {
+        indicator.classList.add('online');
+        text.textContent = 'Online';
+        text.style.color = 'var(--cyan)';
+      } else {
+        indicator.classList.add('offline');
+        text.textContent = 'Offline';
+        text.style.color = 'var(--rose)';
+      }
+    }
+  } catch (err) {
+    console.error('Uptime health check failed:', err);
+  }
+}
+
+function switchLogTab(tab) {
+  // Tabs active status
+  document.getElementById('ltHistory').classList.toggle('active', tab === 'history');
+  document.getElementById('ltSecurity').classList.toggle('active', tab === 'security');
+  document.getElementById('ltCalendar').classList.toggle('active', tab === 'calendar');
+
+  // Content panels toggle
+  document.getElementById('contentHistory').classList.toggle('active', tab === 'history');
+  document.getElementById('contentSecurity').classList.toggle('active', tab === 'security');
+  document.getElementById('contentCalendar').classList.toggle('active', tab === 'calendar');
+}
+
+async function refreshDashboardData() {
+  await Promise.all([
+    fetchExecutionHistory(),
+    fetchSecurityIncidents(),
+    fetchCalendarEvents(),
+    fetchConfigs()
+  ]);
+}
+
+async function fetchExecutionHistory() {
+  try {
+    const res = await fetch('/db/history');
+    const logs = await res.json();
+    const tbody = document.getElementById('tblHistory');
+    if (!logs || !logs.length) {
+      tbody.innerHTML = '<tr><td colspan="5" class="tbl-empty">No activity logs stored in SQLite.</td></tr>';
+      return;
+    }
+    tbody.innerHTML = logs.map(l => `
+      <tr>
+        <td style="white-space:nowrap;">${formatDate(l.timestamp)}</td>
+        <td>${escapeHtml(l.command_text)}</td>
+        <td><code>${escapeHtml(l.tool_name)}</code></td>
+        <td><span class="badge-status status-${l.status}">${l.status}</span></td>
+        <td><pre style="margin:0; font-size:10px; font-family:var(--font-mono); white-space:pre-wrap;">${escapeHtml(l.result)}</pre></td>
+      </tr>
+    `).join('');
+  } catch (err) {
+    document.getElementById('tblHistory').innerHTML = `<tr><td colspan="5" class="tbl-empty error">Failed to connect: ${err.message}</td></tr>`;
+  }
+}
+
+async function fetchSecurityIncidents() {
+  try {
+    const res = await fetch('/db/security');
+    const logs = await res.json();
+    const tbody = document.getElementById('tblSecurity');
+    if (!logs || !logs.length) {
+      tbody.innerHTML = '<tr><td colspan="4" class="tbl-empty">No security violations recorded. System is secure.</td></tr>';
+      return;
+    }
+    tbody.innerHTML = logs.map(l => `
+      <tr>
+        <td style="white-space:nowrap;">${formatDate(l.timestamp)}</td>
+        <td><span style="color:var(--rose)">${escapeHtml(l.command_text)}</span></td>
+        <td><span class="badge-status status-error">${escapeHtml(l.violation_type)}</span></td>
+        <td><code>${escapeHtml(l.target_resource)}</code></td>
+      </tr>
+    `).join('');
+  } catch (err) {
+    document.getElementById('tblSecurity').innerHTML = `<tr><td colspan="4" class="tbl-empty error">Failed to connect: ${err.message}</td></tr>`;
+  }
+}
+
+async function fetchCalendarEvents() {
+  try {
+    const res = await fetch('/db/calendar');
+    const events = await res.json();
+    const tbody = document.getElementById('tblCalendar');
+    if (!events || !events.length) {
+      tbody.innerHTML = '<tr><td colspan="4" class="tbl-empty">No calendar events scheduled.</td></tr>';
+      return;
+    }
+    tbody.innerHTML = events.map(e => `
+      <tr>
+        <td style="white-space:nowrap;">${formatDate(e.created_at)}</td>
+        <td><strong>${escapeHtml(e.title)}</strong></td>
+        <td>${escapeHtml(e.event_time)}</td>
+        <td><span class="badge-status status-success">${escapeHtml(e.action)}</span></td>
+      </tr>
+    `).join('');
+  } catch (err) {
+    document.getElementById('tblCalendar').innerHTML = `<tr><td colspan="4" class="tbl-empty error">Failed to connect: ${err.message}</td></tr>`;
+  }
+}
+
+async function fetchConfigs() {
+  try {
+    const res = await fetch('/db/configs');
+    const configs = await res.json();
+    if (configs.llm_provider) {
+      document.getElementById('configProvider').value = configs.llm_provider.value;
+    }
+    if (configs.sandbox_dir) {
+      document.getElementById('configSandbox').value = configs.sandbox_dir.value;
+    }
+  } catch (err) {
+    console.error('Failed to load configs:', err);
+  }
+}
+
+async function updateSettings() {
+  const provider = document.getElementById('configProvider').value;
+  try {
+    const res = await fetch('/db/configs', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ key: 'llm_provider', value: provider })
+    });
+    const data = await res.json();
+    if (data.success) {
+      console.log('Configs successfully updated in SQLite database.');
+    }
+  } catch (err) {
+    console.error('Failed to update config settings:', err);
+  }
+}
+
+function formatDate(isoStr) {
+  if (!isoStr) return '';
+  const d = new Date(isoStr);
+  return d.toLocaleString([], { month: 'short', day: '2-digit', hour: '2-digit', minute: '2-digit', second: '2-digit' });
+}

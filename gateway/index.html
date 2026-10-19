@@ -1,12 +1,17 @@
+\
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
-  <meta charset="UTF-8"/>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>AURA — AI Assistant</title>
-  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Mono:ital,wght@0,300;0,400;0,500;1,300&family=Instrument+Serif:ital@0;1&display=swap" rel="stylesheet"/>
-  <link rel="stylesheet" href="styles.css"/>
+  <link
+    href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Mono:ital,wght@0,300;0,400;0,500;1,300&family=Instrument+Serif:ital@0;1&display=swap"
+    rel="stylesheet" />
+  <link rel="stylesheet" href="styles.css" />
 </head>
+
 <body>
 
   <!-- AMBIENT BACKGROUND LAYERS -->
@@ -26,20 +31,22 @@
         </div>
       </div>
       <nav>
-        <a href="#"      class="nav-link active">Home</a>
-        <a href="/"      class="nav-link">Gateway</a>
+        <a href="#" class="nav-link active">Home</a>
+        <a href="/" class="nav-link">Gateway</a>
         <a href="/tools" class="nav-link">Tools</a>
         <button class="nav-link feat-toggle" id="featBtn" onclick="toggleFeatures(event)">
           ⚡ Features <span class="feat-arrow" id="featArrow">▾</span>
         </button>
-        <a href="#"      class="nav-link">Commands</a>
-        <a href="#"      class="nav-link">About</a>
+        <a href="#" class="nav-link">Commands</a>
+        <a href="#" class="nav-link">About</a>
       </nav>
     </div>
 
     <div class="nav-right">
       <div class="sys-status">
-        <div class="pulse-ring"><div class="pulse-dot"></div></div>
+        <div class="pulse-ring">
+          <div class="pulse-dot"></div>
+        </div>
         <span class="status-label">Online</span>
       </div>
       <button class="header-btn" onclick="openContact()">Contact</button>
@@ -62,19 +69,26 @@
         <!-- COL 1: VOICE & LANGUAGE -->
         <div class="feat-col feat-col-cyan">
           <div class="feat-col-label"><span>🎙</span> Voice &amp; Language</div>
-          <button class="feat-chip" onclick="tryFeature('Voice Input',        'Open Chrome',                    'Chrome is open — launching now.')">
+          <button class="feat-chip"
+            onclick="tryFeature('Voice Input',        'Open Chrome',                    'Chrome is open — launching now.')">
             <span class="fc-icon">🎤</span><span class="fc-name">Voice Input</span>
           </button>
-          <button class="feat-chip" onclick="tryFeature('Audio Response',     'Read this back to me',           'Playing audio response now.')">
+          <button class="feat-chip"
+            onclick="tryFeature('Audio Response',     'Read this back to me',           'Playing audio response now.')">
             <span class="fc-icon">🔊</span><span class="fc-name">Audio Response</span>
           </button>
-          <button class="feat-chip" onclick="tryFeature('Wake Word',          'Hey AURA…',                      'Woke up. Ready.')">
-            <span class="fc-icon">👂</span><span class="fc-name">Wake Word</span><span class="fc-badge badge-beta">BETA</span>
+          <button class="feat-chip"
+            onclick="tryFeature('Wake Word',          'Hey AURA…',                      'Woke up. Ready.')">
+            <span class="fc-icon">👂</span><span class="fc-name">Wake Word</span><span
+              class="fc-badge badge-beta">BETA</span>
           </button>
-          <button class="feat-chip" onclick="tryFeature('Multi-language',     'Translate hello to Tamil',       '&quot;Hello&quot; in Tamil is வணக்கம் (Vanakkam).')">
-            <span class="fc-icon">🌐</span><span class="fc-name">Multi-language</span><span class="fc-badge badge-new">NEW</span>
+          <button class="feat-chip"
+            onclick="tryFeature('Multi-language',     'Translate hello to Tamil',       '&quot;Hello&quot; in Tamil is வணக்கம் (Vanakkam).')">
+            <span class="fc-icon">🌐</span><span class="fc-name">Multi-language</span><span
+              class="fc-badge badge-new">NEW</span>
           </button>
-          <button class="feat-chip" onclick="tryFeature('Web Search',         'Search latest Python news',      'Found 3 results — top: Python 3.13 released with JIT compiler improvements.')">
+          <button class="feat-chip"
+            onclick="tryFeature('Web Search',         'Search latest Python news',      'Found 3 results — top: Python 3.13 released with JIT compiler improvements.')">
             <span class="fc-icon">🔍</span><span class="fc-name">Web Search</span>
           </button>
         </div>
@@ -85,16 +99,20 @@
           <button class="feat-chip" onclick="tryFeature('Open App',      'Open Spotify',         'Spotify is open.')">
             <span class="fc-icon">🚀</span><span class="fc-name">Open Apps</span>
           </button>
-          <button class="feat-chip" onclick="tryFeature('Close App',     'Close Chrome',         'Chrome has been closed.')">
+          <button class="feat-chip"
+            onclick="tryFeature('Close App',     'Close Chrome',         'Chrome has been closed.')">
             <span class="fc-icon">✕</span><span class="fc-name">Close Apps</span>
           </button>
-          <button class="feat-chip" onclick="tryFeature('Volume Control','Volume up',             'Volume up by 5 steps.')">
+          <button class="feat-chip"
+            onclick="tryFeature('Volume Control','Volume up',             'Volume up by 5 steps.')">
             <span class="fc-icon">🔉</span><span class="fc-name">Volume Control</span>
           </button>
-          <button class="feat-chip" onclick="tryFeature('System Stats',  'What is my RAM?',      'RAM at 58% — 9.3 GB used of 16 GB. Plenty of headroom.')">
+          <button class="feat-chip"
+            onclick="tryFeature('System Stats',  'What is my RAM?',      'RAM at 58% — 9.3 GB used of 16 GB. Plenty of headroom.')">
             <span class="fc-icon">📊</span><span class="fc-name">System Stats</span>
           </button>
-          <button class="feat-chip" onclick="tryFeature('Window Manager','Minimize Chrome',       'Chrome window minimized.')">
+          <button class="feat-chip"
+            onclick="tryFeature('Window Manager','Minimize Chrome',       'Chrome window minimized.')">
             <span class="fc-icon">🪟</span><span class="fc-name">Window Manager</span>
           </button>
         </div>
@@ -102,19 +120,24 @@
         <!-- COL 3: FILES -->
         <div class="feat-col feat-col-amber">
           <div class="feat-col-label"><span>📁</span> Files &amp; Productivity</div>
-          <button class="feat-chip" onclick="tryFeature('Create File',  'Create notes.txt',                     'Done — notes.txt created on your Desktop.')">
+          <button class="feat-chip"
+            onclick="tryFeature('Create File',  'Create notes.txt',                     'Done — notes.txt created on your Desktop.')">
             <span class="fc-icon">📄</span><span class="fc-name">Create Files</span>
           </button>
-          <button class="feat-chip" onclick="tryFeature('Read File',    'Read demo.txt',                        'Contents of demo.txt: Hello World. Test file.')">
+          <button class="feat-chip"
+            onclick="tryFeature('Read File',    'Read demo.txt',                        'Contents of demo.txt: Hello World. Test file.')">
             <span class="fc-icon">📖</span><span class="fc-name">Read Files</span>
           </button>
-          <button class="feat-chip" onclick="tryFeature('Edit File',    'Append to notes.txt: done',            'Appended to notes.txt successfully.')">
+          <button class="feat-chip"
+            onclick="tryFeature('Edit File',    'Append to notes.txt: done',            'Appended to notes.txt successfully.')">
             <span class="fc-icon">✏️</span><span class="fc-name">Edit Files</span>
           </button>
-          <button class="feat-chip" onclick="tryFeature('Find File',    'Find report.pdf',                      'Found report.pdf in C:\\Users\\Nitin\\Downloads\\')">
+          <button class="feat-chip"
+            onclick="tryFeature('Find File',    'Find report.pdf',                      'Found report.pdf in C:\\Users\\Nitin\\Downloads\\')">
             <span class="fc-icon">🔎</span><span class="fc-name">Find Files</span>
           </button>
-          <button class="feat-chip" onclick="tryFeature('Gmail Compose','Email john@gmail.com about meeting',   'Gmail opened — to john@gmail.com ready. Just hit Send.')">
+          <button class="feat-chip"
+            onclick="tryFeature('Gmail Compose','Email john@gmail.com about meeting',   'Gmail opened — to john@gmail.com ready. Just hit Send.')">
             <span class="fc-icon">📧</span><span class="fc-name">Gmail Compose</span>
           </button>
         </div>
@@ -122,19 +145,24 @@
         <!-- COL 4: SCREEN & UI -->
         <div class="feat-col feat-col-violet">
           <div class="feat-col-label"><span>👁</span> Screen &amp; UI</div>
-          <button class="feat-chip" onclick="tryFeature('Read Screen',    'What is on my screen?',     'VS Code is open with a Python file. Chrome is in the taskbar. AURA folder is on the Desktop.')">
+          <button class="feat-chip"
+            onclick="tryFeature('Read Screen',    'What is on my screen?',     'VS Code is open with a Python file. Chrome is in the taskbar. AURA folder is on the Desktop.')">
             <span class="fc-icon">👁️</span><span class="fc-name">Read Screen</span>
           </button>
-          <button class="feat-chip" onclick="tryFeature('Click Icon',     'Open Recycle Bin',          'Found Recycle Bin — double clicked.')">
+          <button class="feat-chip"
+            onclick="tryFeature('Click Icon',     'Open Recycle Bin',          'Found Recycle Bin — double clicked.')">
             <span class="fc-icon">🖱️</span><span class="fc-name">Click Icons</span>
           </button>
-          <button class="feat-chip" onclick="tryFeature('Screenshot',     'Take a screenshot',         'Screenshot saved to your Desktop.')">
+          <button class="feat-chip"
+            onclick="tryFeature('Screenshot',     'Take a screenshot',         'Screenshot saved to your Desktop.')">
             <span class="fc-icon">📸</span><span class="fc-name">Screenshot</span>
           </button>
-          <button class="feat-chip" onclick="tryFeature('Keyboard Control','Press Ctrl+S',             'Pressed Ctrl+S — file saved.')">
+          <button class="feat-chip"
+            onclick="tryFeature('Keyboard Control','Press Ctrl+S',             'Pressed Ctrl+S — file saved.')">
             <span class="fc-icon">⌨️</span><span class="fc-name">Keyboard Control</span>
           </button>
-          <button class="feat-chip" onclick="tryFeature('Mouse Control',  'Scroll down',               'Scrolled down 3 steps.')">
+          <button class="feat-chip"
+            onclick="tryFeature('Mouse Control',  'Scroll down',               'Scrolled down 3 steps.')">
             <span class="fc-icon">🖱</span><span class="fc-name">Mouse Control</span>
           </button>
         </div>
@@ -142,19 +170,26 @@
         <!-- COL 5: SMART -->
         <div class="feat-col feat-col-rose">
           <div class="feat-col-label"><span>🧠</span> Smart Features</div>
-          <button class="feat-chip" onclick="tryFeature('Time &amp; Date', 'What time is it?',          'It\'s 8:27 PM — Wednesday, 18th February 2026.')">
+          <button class="feat-chip"
+            onclick="tryFeature('Time &amp; Date', 'What time is it?',          'It\'s 8:27 PM — Wednesday, 18th February 2026.')">
             <span class="fc-icon">🕐</span><span class="fc-name">Time &amp; Date</span>
           </button>
-          <button class="feat-chip" onclick="tryFeature('Calendar',        'Add meeting tomorrow 3pm',  'Added &quot;Meeting&quot; to your calendar at tomorrow 3:00 PM.')">
+          <button class="feat-chip"
+            onclick="tryFeature('Calendar',        'Add meeting tomorrow 3pm',  'Added &quot;Meeting&quot; to your calendar at tomorrow 3:00 PM.')">
             <span class="fc-icon">📅</span><span class="fc-name">Calendar Events</span>
           </button>
-          <button class="feat-chip" onclick="tryFeature('Memory',          'What did I just ask?',      'You asked me to add a meeting. Before that you asked for the time.')">
-            <span class="fc-icon">💾</span><span class="fc-name">Memory &amp; Context</span><span class="fc-badge badge-new">NEW</span>
+          <button class="feat-chip"
+            onclick="tryFeature('Memory',          'What did I just ask?',      'You asked me to add a meeting. Before that you asked for the time.')">
+            <span class="fc-icon">💾</span><span class="fc-name">Memory &amp; Context</span><span
+              class="fc-badge badge-new">NEW</span>
           </button>
-          <button class="feat-chip" onclick="tryFeature('Multi-step Tasks','Search Python tips and save','Searched → found 3 tips → saved to python_tips.txt. Done.')">
-            <span class="fc-icon">🔗</span><span class="fc-name">Multi-step Tasks</span><span class="fc-badge badge-pro">PRO</span>
+          <button class="feat-chip"
+            onclick="tryFeature('Multi-step Tasks','Search Python tips and save','Searched → found 3 tips → saved to python_tips.txt. Done.')">
+            <span class="fc-icon">🔗</span><span class="fc-name">Multi-step Tasks</span><span
+              class="fc-badge badge-pro">PRO</span>
           </button>
-          <button class="feat-chip" onclick="tryFeature('General Chat',    'Tell me a fun fact',        'The longest chicken flight ever recorded was 13 seconds. Aerodynamics clearly had opinions.')">
+          <button class="feat-chip"
+            onclick="tryFeature('General Chat',    'Tell me a fun fact',        'The longest chicken flight ever recorded was 13 seconds. Aerodynamics clearly had opinions.')">
             <span class="fc-icon">💬</span><span class="fc-name">General Chat</span>
           </button>
         </div>
@@ -324,16 +359,16 @@
         <div class="mode-tabs">
           <button class="tab-btn active" id="tabText" onclick="switchMode('text')">
             <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
-              <polyline points="4 7 4 4 20 4 20 7"/>
-              <line x1="9" y1="20" x2="15" y2="20"/>
-              <line x1="12" y1="4"  x2="12" y2="20"/>
+              <polyline points="4 7 4 4 20 4 20 7" />
+              <line x1="9" y1="20" x2="15" y2="20" />
+              <line x1="12" y1="4" x2="12" y2="20" />
             </svg>
             Text Mode
           </button>
           <button class="tab-btn" id="tabVoice" onclick="switchMode('voice')">
             <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
-              <path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"/>
-              <path d="M19 10v2a7 7 0 0 1-14 0v-2"/>
+              <path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z" />
+              <path d="M19 10v2a7 7 0 0 1-14 0v-2" />
             </svg>
             Voice Mode
           </button>
@@ -343,18 +378,13 @@
         <div id="textMode" class="input-row">
           <div class="input-box">
             <span class="input-prompt">›</span>
-            <textarea
-              id="textInput"
-              rows="1"
-              placeholder="Ask AURA anything..."
-              onkeydown="handleKey(event)"
-              oninput="autoResize(this)"
-            ></textarea>
+            <textarea id="textInput" rows="1" placeholder="Ask AURA anything..." onkeydown="handleKey(event)"
+              oninput="autoResize(this)"></textarea>
           </div>
           <button class="send-btn" id="sendBtn" onclick="sendText()" title="Send">
             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
-              <line x1="12" y1="19" x2="12" y2="5"/>
-              <polyline points="5 12 12 5 19 12"/>
+              <line x1="12" y1="19" x2="12" y2="5" />
+              <polyline points="5 12 12 5 19 12" />
             </svg>
           </button>
         </div>
@@ -364,20 +394,30 @@
           <div class="voice-wrap">
             <button class="mic-btn" id="micBtn" onclick="toggleRecording()">
               <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                <path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"/>
-                <path d="M19 10v2a7 7 0 0 1-14 0v-2"/>
-                <line x1="12" y1="19" x2="12" y2="23"/>
-                <line x1="8"  y1="23" x2="16" y2="23"/>
+                <path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z" />
+                <path d="M19 10v2a7 7 0 0 1-14 0v-2" />
+                <line x1="12" y1="19" x2="12" y2="23" />
+                <line x1="8" y1="23" x2="16" y2="23" />
               </svg>
             </button>
             <div class="voice-info">
               <div class="voice-status" id="voiceStatus">Click to begin recording</div>
               <div class="waveform-full" id="waveformFull">
-                <div class="wf-bar"></div><div class="wf-bar"></div><div class="wf-bar"></div>
-                <div class="wf-bar"></div><div class="wf-bar"></div><div class="wf-bar"></div>
-                <div class="wf-bar"></div><div class="wf-bar"></div><div class="wf-bar"></div>
-                <div class="wf-bar"></div><div class="wf-bar"></div><div class="wf-bar"></div>
-                <div class="wf-bar"></div><div class="wf-bar"></div><div class="wf-bar"></div>
+                <div class="wf-bar"></div>
+                <div class="wf-bar"></div>
+                <div class="wf-bar"></div>
+                <div class="wf-bar"></div>
+                <div class="wf-bar"></div>
+                <div class="wf-bar"></div>
+                <div class="wf-bar"></div>
+                <div class="wf-bar"></div>
+                <div class="wf-bar"></div>
+                <div class="wf-bar"></div>
+                <div class="wf-bar"></div>
+                <div class="wf-bar"></div>
+                <div class="wf-bar"></div>
+                <div class="wf-bar"></div>
+                <div class="wf-bar"></div>
               </div>
             </div>
           </div>
@@ -398,11 +438,11 @@
       <p class="modal-sub">Have feedback or found a bug? We'd love to hear from you.</p>
       <div class="form-group">
         <label>Your Name</label>
-        <input type="text" placeholder="e.g. Alex Chen"/>
+        <input type="text" placeholder="e.g. Alex Chen" />
       </div>
       <div class="form-group">
         <label>Email Address</label>
-        <input type="email" placeholder="you@example.com"/>
+        <input type="email" placeholder="you@example.com" />
       </div>
       <div class="form-group">
         <label>Message</label>
@@ -414,4 +454,5 @@
 
   <script src="script.js"></script>
 </body>
+
 </html>
